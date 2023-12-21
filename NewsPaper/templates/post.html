@@ -1,0 +1,44 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+{{ post.title }}
+{% endblock title %}
+
+{% block content %}
+<style>
+    /* Можно вынести стили в отдельный CSS-файл и подключить его здесь для избежания дублирования кода */
+    .post {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 15px;
+    }
+    .post-title {
+        font-size: 1.5em;
+        margin-bottom: .5em;
+    }
+    .post-meta {
+        font-size: .85em;
+        color: #666;
+    }
+    .post-content {
+        margin-top: 1em;
+    }
+    .post-category {
+        font-style: italic;
+    }
+    .post-author {
+        margin-top: 1em;
+    }
+</style>
+
+<article class="post">
+    <h1 class="post-title">{{ post.title }}</h1>
+    <div class="post-content">{{ post.content }}</div>
+    <div class="post-meta">
+        <div class="post-author">
+            Автор: {{ post.author.user.username }} |
+            Дата: {{ post.created_at|date:"d.m.Y H:i" }} |
+            Рейтинг: {{ post.rating }}
+        </div>
+    </div>
+</article>
+{% endblock content %}

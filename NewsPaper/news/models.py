@@ -1,11 +1,15 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from django.core.validators import MinValueValidator
-# Create your models here.
+from django.urls import reverse
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='author')
-    rating = models.IntegerField(default=0,validators=[MinValueValidator(0)])
+    rating = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+
+    # Добавляем метод __str__
+    def __str__(self):
+        return self.user.get_full_name() or self.user.username
 
     def update_rating(self):
         # Суммарный рейтинг статей автора, умноженный на 3
@@ -43,6 +47,9 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.title.title()}: {self.content[:20]}'
+
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
 
     def like(self):
         self.rating += 1

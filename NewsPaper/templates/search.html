@@ -1,0 +1,23 @@
+{% extends "flatpages/default.html" %}
+
+{% block content %}
+  <h2>Поиск новостей</h2>
+  <form method="get">
+    {{ filter.form.as_p }}
+    <button type="submit">Поиск</button>
+  </form>
+
+  <hr>
+
+  <h3>Результаты:</h3>
+  {% for news in filter.qs %}
+    <article>
+      <h4><a href="{% url 'post_detail' pk=news.pk %}">{{ news.title }}</a></h4>
+      <p>{{ news.content }}</p>
+      <p>Автор: {{ news.author }}</p>
+      <p>Дата публикации: {{ news.created_at }}</p> <!-- Исправлено на правильное поле даты публикации -->
+    </article>
+  {% empty %}
+    <p>Новостей, удовлетворяющих критериям поиска, не найдено.</p>
+  {% endfor %}
+{% endblock %}

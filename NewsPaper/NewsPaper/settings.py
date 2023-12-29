@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'news',
     'accounts',
-    'fpages'
+    'fpages',
+    'django_filters'
 ]
 
 MIDDLEWARE = [

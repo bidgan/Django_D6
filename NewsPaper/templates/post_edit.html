@@ -1,0 +1,33 @@
+{% extends "flatpages/default.html" %}
+
+{% load static %}
+
+{% block title %}
+  {% if form.instance.pk %}Редактирование поста{% else %}Создание поста{% endif %}
+{% endblock %}
+
+{% block content %}
+  <h1>{% if form.instance.pk %}Редактировать пост{% else %}Создать новый пост{% endif %}</h1>
+
+  {% if form.errors %}
+    <p>Пожалуйста, исправьте ошибки ниже:</p>
+    <ul>
+      {% for field in form %}
+        {% for error in field.errors %}
+          <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить</button>
+  </form>
+
+  <a href="{% url 'home' %}">Вернуться на домашнюю страницу</a>
+{% endblock %}

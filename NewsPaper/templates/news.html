@@ -1,0 +1,84 @@
+{% extends "flatpages/default.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Стили -->
+<style>
+  /* Стили для новостей */
+  .news-list {
+    list-style: none;
+    padding: 0;
+  }
+  .news-item {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+  }
+  .news-item h2 {
+    margin-top: 0;
+    color: #007BFF;
+  }
+  .news-item p {
+    margin: 0.5rem 0;
+  }
+  .content {
+    margin-top: 1rem;
+  }
+  /* Стили для пагинации */
+  .pagination {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  .pagination a {
+    margin: 0 5px;
+    text-decoration: none;
+    color: #007BFF;
+  }
+  .pagination .current {
+    margin: 0 5px;
+    font-weight: bold;
+  }
+</style>
+
+<!-- Заголовок -->
+<h1>News</h1>
+
+<!-- Вывод новостей -->
+<ul class="news-list">
+  {% for post in posts %}
+    <li class="news-item">
+      <h2>{{ post.title }}</h2>
+      <p><strong>Published on:</strong> {{ post.created_at|date:"F d, Y" }}</p>
+      <p><strong>Author:</strong> {{ post.author }}</p>
+      <div class="content">{{ post.content|linebreaks }}</div>
+    </li>
+  {% empty %}
+    <p>No news posts are available.</p>
+  {% endfor %}
+</ul>
+<a href="{% url 'home' %}" class="return-link">Вернуться на домашнюю страницу</a>
+<!-- Пагинация -->
+{# Добавляем пагинацию на страницу #}
+
+   {# Информация о предыдущих страницах #}
+   {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {# Информация о текущей странице #}
+   {{ page_obj.number }}
+
+   {# Информация о следующих страницах #}
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+{% endblock %}

@@ -11,6 +11,9 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 
 
 def home(request):
@@ -82,19 +85,25 @@ class PostDetail(DetailView):
     context_object_name = 'post'
 
 
-class PostCreate(CreateView):
-    # Указываем нашу разработанную форму
-    form_class = PostForm
-    # модель товаров
-    model = Post
-    # и новый шаблон, в котором используется форма.
-    template_name = 'post_edit.html'
-
-
-class PostUpdate(UpdateView):
+class PostCreate(PermissionRequiredMixin, CreateView):
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
+    permission_required = ('news.add_post',)
+
+
+class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    form_class = PostForm
+    model = Post
+    template_name = 'post_edit.html'
+    permission_required = ('news.change_post',)
+
+    def dispatch(self, request, *args, **kwargs):
+        post = self.get_object()
+        # Предполагаем, что у модели Author есть связь user, которая указывает на модель User
+        if post.author.user != request.user:
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
 
 
 def search_news(request):
@@ -102,7 +111,16 @@ def search_news(request):
     news_filter = PostFilter(request.GET, queryset=news_list)
     return render(request, 'search.html', {'filter': news_filter})
 
-class PostDelete(DeleteView):
+class PostDelete(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('home')
+    permission_required = ('news.delete_post',)  # замените 'newspaper' на название вашего приложения
+
+    def dispatch(self, request, *args, **kwargs):
+        post = self.get_object()
+        # Проверить, связан ли текущий пользователь с автором поста
+        if post.author.user != request.user:
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+

@@ -5,10 +5,22 @@
 {% block content %}
     <h2>Добро пожаловать на главную страницу!</h2>
     <p>
-        <a href="/home/news">Посетите раздел Новости</a>
+        <a href="{% url 'news-list' %}">Посетите раздел Новости</a>
     </p>
     <p>
-        <a href="/home/articles">Посетите раздел Статьи</a>
+        <a href="{% url 'articles-list' %}">Посетите раздел Статьи</a>
     </p>
+    <div>
+        <h3>Категории</h3>
+        <ul>
+            {% for category in categories %}
+            <li>
+                <a href="{% url 'category_list' pk=category.id %}">{{ category.name }}</a>
+            </li>
+            {% empty %}
+            <li>Категории не найдены.</li>
+            {% endfor %}
+        </ul>
+    </div>
     <!-- Дополнительный контент главной страницы, если он нужен -->
 {% endblock %}

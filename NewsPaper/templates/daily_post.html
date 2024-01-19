@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru"> <!-- Обновлено для русского языка -->
+<head>
+    <meta charset="UTF-8">
+    <title>Уведомление</title>
+</head>
+<body>
+    <h2>Здравствуйте! Новые статьи за последнюю неделю</h2>
+    <ul>
+        {% for post in posts %}
+            <li>
+                <!-- Исправлено формирование URL и закрыты кавычки в теге <a> -->
+                <a href="{{ link }}{{ post.get_absolute_url }}">{{ post.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

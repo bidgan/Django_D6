@@ -18,6 +18,10 @@ from .models import Post, Category
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpResponse
+from django.views import View
+from .tasks import  send_email_task
+
 
 
 def home(request):
@@ -96,6 +100,16 @@ class PostCreate(PermissionRequiredMixin, CreateView):
     template_name = 'post_edit.html'
     permission_required = ('news.add_post',)
 
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        if self.request.method == 'POST':
+            if self.request.path == '/home/news/create/' :
+                post.post_type = 'NW'
+            form.instance.author = self.request.user.author
+        post.save()
+        send_email_task.delay(post.pk)
+        return super().form_valid(form)
+
 
 class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     form_class = PostForm
@@ -157,5 +171,7 @@ def subscribe(request, pk):
     message = 'Вы успешно подписались на рассылку новостей категории'
 
     return render(request, 'subscribe.html', {'category': category, 'message': message})
+
+
 
 

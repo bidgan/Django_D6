@@ -127,6 +127,97 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console_formatter': {
+            'format': '%(asctime)s - %(levelname)s - %(message)s'
+        },
+        'file_formatter': {
+            'format': '%(asctime)s - %(levelname)s - %(module)s - %(message)s'
+        },
+        'error_formatter': {
+            'format': '%(asctime)s - %(levelname)s - %(message)s - %(pathname)s\n%(exc_info)s'
+        },
+        'security_formatter': {
+            'format': '%(asctime)s - %(levelname)s - %(module)s - %(message)s'
+        },
+        'email_formatter': {
+            'format': '%(asctime)s - %(levelname)s - %(message)s'
+        },
+    },
+    'handlers': {
+        'console_handler': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_formatter',
+            'level': 'DEBUG'
+        },
+        'general_file_handler': {
+            'class': 'logging.FileHandler',
+            'formatter': 'file_formatter',
+            'filename': 'general.log',
+            'level': 'INFO'
+        },
+        'errors_file_handler': {
+            'class': 'logging.FileHandler',
+            'formatter': 'error_formatter',
+            'filename': 'errors.log',
+            'level': 'ERROR'
+        },
+        'security_file_handler': {
+            'class': 'logging.FileHandler',
+            'formatter': 'security_formatter',
+            'filename': 'security.log',
+            'level': 'INFO'
+        },
+        'email_handler': {
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'email_formatter',
+            'level': 'ERROR',
+            'include_html': False
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console_handler', 'general_file_handler', 'errors_file_handler', 'email_handler'],
+            'level': 'DEBUG' if DEBUG else 'INFO'
+        },
+        'django.request': {
+            'handlers': ['errors_file_handler', 'email_handler'],
+            'level': 'ERROR'
+        },
+        'django.server': {
+            'handlers': ['errors_file_handler', 'email_handler'],
+            'level': 'ERROR'
+        },
+        'django.template': {
+            'handlers': ['errors_file_handler'],
+            'level': 'ERROR'
+        },
+        'django.db.backends': {
+            'handlers': ['errors_file_handler'],
+            'level': 'ERROR'
+        },
+        'django.security': {
+            'handlers': ['security_file_handler'],
+            'level': 'INFO'
+        }
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue'
+        }
+    },
+    'root': {
+        'handlers': ['console_handler'],
+        'level': 'DEBUG'
+    }
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
